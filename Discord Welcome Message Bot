@@ -1,0 +1,32 @@
+import discord
+import random
+from discord.ext import commands
+
+intents = discord.Intents.default()
+intents.members = True
+
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+welcome_messages = [
+    "Welcome {member.mention} to Badnaam Ghar! Please take <#1019299720172163072> and read the <#1019299716418244669>.",
+    "Hey {member.mention}! Welcome to the server. We're glad to have you here! Please take <#1019299720172163072> and read the <#1019299716418244669>.",
+    "Welcome {member.mention}! Feel free to introduce yourself and enjoy your time in the server! Please take <#1019299720172163072> and read the <#1019299716418244669>.",
+    "Hello {member.mention}! Welcome to the Badnaam Ghar community. We hope you have a great time with us! Please take <#1019299720172163072> and read the <#1019299716418244669>."
+]
+
+channel_ids = [Channel ID]  # List of channel IDs, use semicolan to add multiple channel ids but every ID is in bracket.
+
+@bot.event
+async def on_member_join(member):
+    guild = member.guild
+    channel_id = random.choice(channel_ids)
+    channel = guild.get_channel(channel_id)
+    if channel is not None:
+        welcome_message = random.choice(welcome_messages)
+        await channel.send(welcome_message.format(member=member))
+
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user.name}")
+
+bot.run('Enter Your Bot Token Here')
