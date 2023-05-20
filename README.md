@@ -51,6 +51,9 @@ discord.py
 
 To remove seconds from time then remove this :%S from line 41 and 48.
 
+For disloud.com add discloud.config file.
+
+If you are using discloud.com then also make these files in zip.
 
 For any kind of help message me at JHONY BRAVO #0001 on Discord.
 
