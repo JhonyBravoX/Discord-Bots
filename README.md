@@ -49,7 +49,7 @@ Or if you are using replit.com
 Then write this in requiremnts.txt to install packages
 discord.py
 
-
+To remove seconds from time then remove this :%S from line 41 and 48.
 
 
 For any kind of help message me at JHONY BRAVO #0001 on Discord.
