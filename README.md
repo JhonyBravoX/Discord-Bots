@@ -30,6 +30,28 @@ Before using the scripts, kindly paste you bot token in "Enter Your Bot Token He
 
 You can edit the messages and also you can mention any channel or role by using this <#Your=Channel-ID-OR-Role-ID>.
 
+For Using Time Script
+
+Change Your Time Region
+
+Chnage Your Bot Token
+
+Write this in requiremnts.txt to install packages if you are using Discloud.com
+discord.py
+pytz==2021.1
+and also create packages_install.py
+and write this in the crreated file.
+import subprocess
+
+subprocess.call(['pip', 'install', '-r', 'requirements.txt'])
+
+Or if you are using replit.com
+Then write this in requiremnts.txt to install packages
+discord.py
+
+
+
+
 For any kind of help message me at JHONY BRAVO #0001 on Discord.
 
 Thank You!
