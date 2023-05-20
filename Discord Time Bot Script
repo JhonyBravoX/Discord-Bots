@@ -1,0 +1,31 @@
+import discord
+import pytz
+from discord.ext import commands, tasks
+from datetime import datetime
+
+intents = discord.Intents.default()
+intents.typing = False
+intents.presences = False
+
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user.name}')
+    print('------')
+    update_status.start()  # Start the task to update the bot's status
+
+@tasks.loop(minutes=1)  # Update every 1 minute
+async def update_status():
+    pakistan_tz = pytz.timezone('Asia/Karachi')
+    current_time = datetime.now(pakistan_tz).strftime('%H:%M:%S')
+    activity = discord.Activity(type=discord.ActivityType.watching, name=f'Time: {current_time}')
+    await bot.change_presence(activity=activity)
+
+@bot.command()
+async def time(ctx):
+    pakistan_tz = pytz.timezone('Asia/Karachi')
+    current_time = datetime.now(pakistan_tz).strftime('%H:%M:%S')
+    await ctx.send(f'Time: {current_time}')
+
+bot.run('Enter Your Bot Token Here')
