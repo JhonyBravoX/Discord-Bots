@@ -1,0 +1,51 @@
+import discord
+import random
+import pytz
+from discord.ext import commands, tasks
+from datetime import datetime
+
+intents = discord.Intents.default()
+intents.members = True
+intents.typing = False
+intents.presences = False
+
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+welcome_messages = [
+    "Welcome {member.mention} to Badnaam Ghar! Please take <#1019299720172163072> and read the <#1019299716418244669>.",
+    "Hey {member.mention}! Welcome to the server. We're glad to have you here! Please take <#1019299720172163072> and read the <#1019299716418244669>.",
+    "Welcome {member.mention}! Feel free to introduce yourself and enjoy your time in the server! Please take <#1019299720172163072> and read the <#1019299716418244669>.",
+    "Hello {member.mention}! Welcome to the Badnaam Ghar community. We hope you have a great time with us! Please take <#1019299720172163072> and read the <#1019299716418244669>."
+]
+
+channel_ids = [1019299712794382456]  # List of channel IDs
+
+@bot.event
+async def on_member_join(member):
+    guild = member.guild
+    channel_id = random.choice(channel_ids)
+    channel = guild.get_channel(channel_id)
+    if channel is not None:
+        welcome_message = random.choice(welcome_messages)
+        await channel.send(welcome_message.format(member=member))
+
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user.name}")
+    print('------')
+    update_status.start()  # Start the task to update the bot's status
+
+@tasks.loop(minutes=1)  # Update every 1 minute
+async def update_status():
+    pakistan_tz = pytz.timezone('Asia/Karachi')
+    current_time = datetime.now(pakistan_tz).strftime('%I:%M %p')  # Digital format with AM/PM
+    activity = discord.Activity(type=discord.ActivityType.watching, name=f'Time: {current_time}')
+    await bot.change_presence(activity=activity)
+
+@bot.command()
+async def time(ctx):
+    pakistan_tz = pytz.timezone('Asia/Karachi')
+    current_time = datetime.now(pakistan_tz).strftime('%I:%M %p')  # Digital format with AM/PM
+    await ctx.send(f'Time: {current_time}')
+
+bot.run('Enter Your Bot Token Here')
