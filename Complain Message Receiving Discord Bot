@@ -1,0 +1,45 @@
+import discord
+from discord.ext import commands
+
+# Create an instance of the bot with the required intents
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+# Specify the list of user IDs to receive messages
+user_ids = [982612843528618034, 958062032215752784]
+
+# Event: Executes when the bot is ready
+@bot.event
+async def on_ready():
+    print(f'Bot is connected as {bot.user.name}')
+    await bot.change_presence(activity=discord.Game(name="For You!"))
+
+# Event: Executes when a message is received
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    # Send the message content with sender's username mention to each user's DM
+    if isinstance(message.channel, discord.DMChannel):
+        for user_id in user_ids:
+            user = await bot.fetch_user(user_id)
+            dm_channel = await user.create_dm()
+            sender_mention = message.author.mention
+            await dm_channel.send(f"Received message from {sender_mention}: {message.content}")
+
+        # Auto-reply to the sender
+        await message.channel.send("Thanks for your message! Someone from Badnaam Ghar will contact you ASAP.")
+
+    # Process the received message further based on your requirements
+
+    await bot.process_commands(message)
+
+# Command: Greet the user
+@bot.command()
+async def greet(ctx):
+    await ctx.send("Hello, I'm your friendly Discord bot!")
+
+# Replace 'YOUR_BOT_TOKEN' with the actual token of your bot
+bot.run('YOUR_BOT_TOKEN')
