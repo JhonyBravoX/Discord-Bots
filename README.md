@@ -65,6 +65,8 @@ Enable attach files of the bot roles in the server to make it enable for sending
 
 If you are using combined then do the both steps.
 
+For every bot script (Python) use discord.py in requirements.txt
+
 Thank You!
 
 Regards
