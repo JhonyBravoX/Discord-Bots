@@ -58,8 +58,11 @@ If you are using discloud.com then also make these files in zip.
 For any kind of help message me at JHONY BRAVO #0001 on Discord.
 
 For using complain and announcement scripts.
+
 Add user ids in complain script.
+
 Enable attach files of the bot roles in the server to make it enable for sending annoucements with the picture.
+
 If you are using combined then do the both steps.
 
 Thank You!
