@@ -1,0 +1,28 @@
+Create a file name package.json
+And write this into this code
+
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "description": "My project description",
+  "dependencies": {
+    "discord.js": "^13.0.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}
+
+save it.
+
+Create a new file and name it node_modules.json
+
+and write this into the file
+
+npm install discord.js
+
+and save it.
+
+Now there are three file which includes script, package, modules, and zip it with the hosting file.
