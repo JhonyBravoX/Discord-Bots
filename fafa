@@ -1,0 +1,126 @@
+import discord
+from discord.ext import commands, tasks
+import random
+import pytz
+from datetime import datetime
+import time
+import asyncio
+
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
+intents.typing = False
+intents.presences = False
+
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+welcome_channel_id = 1115012668290519211 # Replace with your welcome channel ID
+forwarding_channel_id = 1114539179666325605  # Replace with your forwarding channel ID
+
+welcome_messages = [
+    "Welcome {member.mention} to the Badnaam Ghar! Please take <#1019299720172163072> and read the <#1019299716418244669>.",
+    "Hey {member.mention}! Welcome to the server. We're glad to have you here! Please take <#1019299720172163072> and read the <#1019299716418244669>.",
+    "Welcome {member.mention}! Feel free to introduce yourself and enjoy your time in the server! Please take <#1019299720172163072> and read the <#1019299716418244669>.",
+    "Hello {member.mention}! Welcome to the Badnaam Ghar community. We hope you have a great time with us! Please take <#1019299720172163072> and read the <#1019299716418244669>."
+]
+
+# Store the last message timestamp for each user
+message_cooldown = {}
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    if isinstance(message.channel, discord.DMChannel):
+        user_id = message.author.id
+        current_time = time.time()
+        cooldown = message_cooldown.get(user_id, 0)
+        remaining_time = int(60 - (current_time - cooldown))
+
+        if remaining_time > 0:
+            await message.author.send(f"Please wait {remaining_time} seconds before sending another message.")
+            return  # Return without processing the message further
+
+        message_cooldown[user_id] = current_time
+
+        forwarding_channel = bot.get_channel(forwarding_channel_id)
+        if forwarding_channel:
+            if message.attachments or message.content:
+                sender_mention = message.author.mention
+                sender_username = str(message.author)
+                forwarded_message = f"Received message from {sender_mention} ({sender_username}):\n"
+
+                if message.content:
+                    forwarded_message += f"Content: {message.content}\n"
+
+                if message.attachments:
+                    for attachment in message.attachments:
+                        forwarded_message += f"Attachment: {attachment.url}\n"
+
+                await forwarding_channel.send(forwarded_message)
+
+        if remaining_time <= 0:
+            await message.author.send("Thank you for contacting us!")  # Send a reply to the user
+
+    await bot.process_commands(message)
+
+@bot.event
+async def on_member_join(member):
+    guild = member.guild
+    channel = guild.get_channel(welcome_channel_id)
+    if channel is not None:
+        welcome_message = random.choice(welcome_messages)
+        await channel.send(welcome_message.format(member=member))
+
+@tasks.loop(minutes=1)
+async def update_status():
+    pakistan_tz = pytz.timezone('Asia/Karachi')
+    current_time = datetime.now(pakistan_tz).strftime('%I:%M %p')  # Digital format with AM/PM
+    activity = discord.Activity(type=discord.ActivityType.watching, name=f'Time: {current_time}')
+    await bot.change_presence(activity=activity)
+
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user.name}")
+    print('------')
+    update_status.start()  # Start the task to update the bot's status
+
+@bot.command(name='abg')
+@commands.has_permissions(administrator=True)
+async def announce(ctx, channel: discord.TextChannel, *, message):
+    attachments = ctx.message.attachments
+    if message or attachments:
+        await channel.send(content=message, files=[await attachment.to_file() for attachment in attachments])
+        await ctx.send("Announcement sent!")
+    else:
+        await ctx.send("Please provide a message or attachment.")
+
+@announce.error
+async def announce_error(ctx, error):
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.send("You do not have permission to use this command!")
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def reply(ctx, user: discord.User, *, message=None):
+    user_dm = await user.create_dm()
+
+    if message:
+        await user_dm.send(message)  # Send the specified message to the user
+
+    if ctx.message.attachments:
+        for attachment in ctx.message.attachments:
+            await user_dm.send(file=await attachment.to_file())
+
+    if message or ctx.message.attachments:
+        await ctx.send("Reply sent!")
+    else:
+        await ctx.send("Please provide a message or attachment.")
+
+@reply.error
+async def reply_error(ctx, error):
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.send("You do not have permission to use this command!")
+
+bot.run('MTEwOTk5MzY4ODM4NzU1OTU3Ng.G_6qnf.FM55UN5TkuZMIy3LDWkqpSTQwXUDtU_z7DIYhg')
