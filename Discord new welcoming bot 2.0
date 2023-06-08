@@ -1,0 +1,48 @@
+const { Client, Intents, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] });
+
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}`);
+});
+
+client.on('guildMemberAdd', (member) => {
+  const welcomeChannel = member.guild.channels.cache.get('1019299712794382456');
+
+  if (welcomeChannel) {
+    const embed = new MessageEmbed()
+      .setAuthor(member.user.tag, member.user.avatarURL())
+      .setDescription([
+        "<a:blobwave:1116094137335304272> Chat here in <#1019299728111972363>!",
+        "",
+        "",
+        "<:emoayaya:1116095452186685590> [Click this to make new friends!](https://discord.gg/gFPxBcDv) <:blackcat:1116097333743079596>"
+      ].join('\n'))
+      .setColor("#4f4f4f")
+      .setFooter("Enjoy your time in Badnaam ghar!", "https://cdn.discordapp.com/attachments/1019299750325006478/1101182528909492275/pngtree-vector-house-icon-png-image_889632.jpg")
+      .setThumbnail("https://cdn.discordapp.com/attachments/988465148496863333/1116089009647665262/1698-fishwave.gif")
+      .setImage("https://cdn.discordapp.com/attachments/1031151622061047878/1031153799953403914/Light_bar_4.gif");
+
+    const components = [
+      new MessageActionRow().addComponents(
+        new MessageButton()
+          .setStyle("LINK")
+          .setLabel("Get Roles")
+          .setURL("https://discord.com/channels/964214982596263956/1019299720172163072")
+          .setEmoji("1114616407259361491"),
+        new MessageButton()
+          .setStyle("LINK")
+          .setLabel("Custom Voice")
+          .setURL("https://discord.com/channels/964214982596263956/1062485292549947472")
+          .setEmoji("1108768009604042842")
+      )
+    ];
+
+    welcomeChannel.send({
+      content: `Welcome to Badnaam ghar, ${member}`,
+      embeds: [embed],
+      components: components
+    });
+  }
+});
+
+client.login('MTEwOTk5MzY4ODM4NzU1OTU3Ng.G_6qnf.FM55UN5TkuZMIy3LDWkqpSTQwXUDtU_z7DIYhg');
