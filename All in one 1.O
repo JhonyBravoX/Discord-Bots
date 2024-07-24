@@ -123,4 +123,4 @@ async def reply_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
         await ctx.send("You do not have permission to use this command!")
 
-bot.run('MTEwOTk5MzY4ODM4NzU1OTU3Ng.G_6qnf.FM55UN5TkuZMIy3LDWkqpSTQwXUDtU_z7DIYhg')
+bot.run('Put Token Here')
